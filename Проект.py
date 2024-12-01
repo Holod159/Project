@@ -11,24 +11,6 @@ from PyQt6.QtWidgets import QComboBox, QTableWidget, QTableWidgetItem, QStyledIt
 imagePath = 'Стул.jpg'
 
 
-class ImgWidget1(QLabel):
-    def __init__(self, parent=None):
-        super(ImgWidget1, self).__init__(parent)
-        pic = QPixmap(imagePath)
-        self.setPixmap(pic)
-
-
-class ImgWidget2(QWidget):
-
-    def __init__(self, parent=None):
-        super(ImgWidget2, self).__init__(parent)
-        self.pic = QPixmap(imagePath)
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.drawPixmap(0, 0, self.pic)
-
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -104,8 +86,14 @@ class MyWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.programs = {1: 'Стул', 2: 'Стол', 3: 'Диван', 4: 'Шкаф', 5: 'Вешалка', 6: 'Тумбочка'}
-        self.kash = {1: 'Плачевное', 2: 'Плохое', 3: 'Среднее', 4: 'Нормальное', 5: 'Отличное'}
+        self.con = sqlite3.connect('Proekt.sql')
+        self.cur = self.con.cursor()
+        cur = self.con.cursor()
+        sql = """SELECT * FROM type"""
+        result = cur.execute(sql).fetchall()
+        self.programs = {}
+        for e in result:
+            self.programs[e[0]] = e[1]
         self.d = {}
         self.picture = QLabel()
         for key, value in self.programs.items():
@@ -125,8 +113,6 @@ class MyWidget(QWidget):
         self.tableWidget = QTableWidget(self)
         self.tableWidget.resize(700, 300)
         self.tableWidget.move(100, 200)
-        self.con = sqlite3.connect('Proekt.sql')
-        self.cur = self.con.cursor()
 
     def initUI(self):
         self.setGeometry(300, 300, 900, 600)
@@ -428,12 +414,6 @@ class MyWidget6(QWidget):
             self.it.setText('Товар успешно добавлен')
             self.con.commit()
         except ValueError:
-            print(a)
-            print(b)
-            print(c)
-            print(d)
-            print(e)
-            print(f)
             self.it.setText('Введите корректные данные')
         self.it.show()
 
