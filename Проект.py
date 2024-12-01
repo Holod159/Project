@@ -392,11 +392,20 @@ class MyWidget6(QWidget):
         self.result = cur.execute(sql).fetchall()
 
     def mover(self):
-        cur = self.con.cursor()
-        ins = (f"INSERT INTO predmet(name, type, year, quality, kolvo, izo) VALUES(self.le.text(), self.le1.text(), self.le2.text(), self.le3.text(), self.le4.text(), self.le5.text()")
-        cur.execute(ins)
-        self.it.setText('Товар успешно добавлен')
-        self.con.commit()
+        a = self.le.text()
+        b = self.le1.text()
+        c = self.le2.text()
+        d = self.le3.text()
+        e = self.le4.text()
+        f = self.le5.text()
+        if type(b) == int and type(c) == int and type(d) == int and type(e) == int:
+            cur = self.con.cursor()
+            ins = (f"INSERT INTO predmet(name, type, year, quality, kolvo, izo) VALUES(?, ?, ?, ?, ?, ?)")
+            cur.execute(ins, (a, b, c, d, e, f))
+            self.it.setText('Товар успешно добавлен')
+            self.con.commit()
+        else:
+            self.it.setText('Введите корректные данные')
         self.it.show()
 
 
