@@ -104,7 +104,7 @@ class MyWidget(QWidget):
         self.tableWidget = QTableWidget(self)
         self.tableWidget.resize(700, 300)
         self.tableWidget.move(100, 200)
-        self.con = sqlite3.connect('../../../untitled1/Proekt.sql')
+        self.con = sqlite3.connect('Proekt.sql')
         self.cur = self.con.cursor()
 
     def initUI(self):
@@ -133,7 +133,7 @@ class MyWidget(QWidget):
             sql = """SELECT * FROM predmet 
             JOIN type ON type.id = predmet.type
             JOIN quality ON quality.id = predmet.quality
-            WHERE type = ?"""
+            WHERE type.id = ?"""
             result = cur.execute(sql, (type_id,)).fetchall()
             self.tableWidget.setRowCount(len(result))
             print(result)
