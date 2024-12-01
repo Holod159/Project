@@ -208,7 +208,7 @@ class MyWidget3(QWidget):
         self.itlabel.resize(300, 30)
         self.itlabel.move(10, 245)
         self.itlabel.hide()
-        self.con = sqlite3.connect('../../../untitled1/Proekt.sql')
+        self.con = sqlite3.connect('Proekt.sql')
         self.cur = self.con.cursor()
 
     def mover(self):
@@ -225,10 +225,12 @@ class MyWidget3(QWidget):
             a = self.le1.text()
             b = self.le.text()
             if int(b) <= len(result):
-                if int(result[int(b)][5]) >= int(a):
-                    print(result[int(b)][5], a)
+                if int(result[int(b) - 1][5]) >= int(a):
+                    print(result[int(b) - 1][5], a)
                     self.itlabel.setText('Покупка совершена!')
-                    UPDATE = "UPDATE predmet SET count = count + 1 WHERE id = ?"
+                    up = (f"UPDATE predmet SET kolvo = {result[int(b) - 1][5] - a} WHERE id = {b}")
+                    cur.execute(up)
+                    self.con.commit()
                 else:
                     self.itlabel.setText('Большое или неправильное кол-во товара')
             else:
