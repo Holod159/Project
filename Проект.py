@@ -228,8 +228,8 @@ class MyWidget3(QWidget):
                 if int(result[int(b) - 1][5]) >= int(a):
                     print(result[int(b) - 1][5], a)
                     self.itlabel.setText('Покупка совершена!')
-                    up = (f"UPDATE predmet SET kolvo = {result[int(b) - 1][5] - a} WHERE id = {b}")
-                    cur.execute(up)
+                    up = (f"UPDATE predmet SET kolvo = ? WHERE id = ?")
+                    cur.execute(up, (result[int(b) - 1][5] - int(a), b))
                     self.con.commit()
                 else:
                     self.itlabel.setText('Большое или неправильное кол-во товара')
@@ -265,12 +265,139 @@ class MyWidget4(QWidget):
         self.pushButton2.resize(300, 100)
         self.pushButton2.move(20, 180)
         self.pushButton2.clicked.connect(self.mover2)
+        self.w1 = MyWidget5()
+        self.w2 = MyWidget6()
 
     def mover(self):
-        pass
+        self.w2.show()
+        self.close()
 
     def mover2(self):
-        pass
+        self.w1.show()
+        self.close()
+
+
+class MyWidget5(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setGeometry(300, 300, 350, 300)
+        self.setWindowTitle('Мебель-П')
+        self.l = QLabel(self)
+        self.l.resize(300, 30)
+        self.l.move(15, 10)
+        self.l.setText('Введите id товара:')
+        self.le = QLineEdit(self)
+        self.le.resize(100, 30)
+        self.le.move(15, 50)
+        self.l1 = QLabel(self)
+        self.l1.resize(300, 30)
+        self.l1.move(15, 100)
+        self.l1.setText('Введите кол-во товара:')
+        self.le1 = QLineEdit(self)
+        self.le1.resize(100, 30)
+        self.le1.move(15, 140)
+        self.pushButton = QPushButton('Добавить', self)
+        self.pushButton.resize(300, 80)
+        self.pushButton.move(15, 180)
+        self.pushButton.clicked.connect(self.mover)
+        self.it = QLabel(self)
+        self.it.resize(300, 30)
+        self.it.move(15, 255)
+        self.it.hide()
+        self.con = sqlite3.connect('Proekt.sql')
+        self.cur = self.con.cursor()
+        cur = self.con.cursor()
+        sql = (f"SELECT * FROM predmet")
+        self.result = cur.execute(sql).fetchall()
+
+    def mover(self):
+        a = self.le.text()
+        b = self.le1.text()
+        if int(a) <= len(self.result):
+            cur = self.con.cursor()
+            up = (f"UPDATE predmet SET kolvo = ? WHERE id = ?")
+            cur.execute(up, (self.result[int(a) - 1][5] + int(b), a))
+            self.it.setText('Товар успешно добавлен')
+            self.con.commit()
+        else:
+            self.it.setText('Товар с таким id не найден')
+        self.it.show()
+
+
+class MyWidget6(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setGeometry(300, 300, 350, 400)
+        self.setWindowTitle('Мебель-П')
+        self.l = QLabel(self)
+        self.l.resize(300, 30)
+        self.l.move(15, 10)
+        self.l.setText('Введите имя товара:')
+        self.le = QLineEdit(self)
+        self.le.resize(100, 30)
+        self.le.move(15, 50)
+        self.l1 = QLabel(self)
+        self.l1.resize(300, 30)
+        self.l1.move(15, 100)
+        self.l1.setText('Введите тип товара:')
+        self.le1 = QLineEdit(self)
+        self.le1.resize(100, 30)
+        self.le1.move(15, 140)
+        self.l2 = QLabel(self)
+        self.l2.resize(300, 30)
+        self.l2.move(15, 180)
+        self.l2.setText('Введите год выпуска:')
+        self.le2 = QLineEdit(self)
+        self.le2.resize(100, 30)
+        self.le2.move(15, 210)
+        self.l3 = QLabel(self)
+        self.l3.resize(300, 30)
+        self.l3.move(150, 10)
+        self.l3.setText('Введите качество:')
+        self.le3 = QLineEdit(self)
+        self.le3.resize(100, 30)
+        self.le3.move(150, 50)
+        self.l4 = QLabel(self)
+        self.l4.resize(300, 30)
+        self.l4.move(150, 100)
+        self.l4.setText('Введите количество:')
+        self.le4 = QLineEdit(self)
+        self.le4.resize(100, 30)
+        self.le4.move(150, 140)
+        self.l5 = QLabel(self)
+        self.l5.resize(300, 30)
+        self.l5.move(150, 180)
+        self.l5.setText('Введите название изображения:')
+        self.le5 = QLineEdit(self)
+        self.le5.resize(100, 30)
+        self.le5.move(150, 210)
+        self.pushButton = QPushButton('Добавить', self)
+        self.pushButton.resize(300, 80)
+        self.pushButton.move(15, 290)
+        self.pushButton.clicked.connect(self.mover)
+        self.it = QLabel(self)
+        self.it.resize(300, 30)
+        self.it.move(15, 255)
+        self.it.hide()
+        self.con = sqlite3.connect('Proekt.sql')
+        self.cur = self.con.cursor()
+        cur = self.con.cursor()
+        sql = (f"SELECT * FROM predmet")
+        self.result = cur.execute(sql).fetchall()
+
+    def mover(self):
+        cur = self.con.cursor()
+        ins = (f"INSERT INTO predmet(name, type, year, quality, kolvo, izo) VALUES(self.le.text(), self.le1.text(), self.le2.text(), self.le3.text(), self.le4.text(), self.le5.text()")
+        cur.execute(ins)
+        self.it.setText('Товар успешно добавлен')
+        self.con.commit()
+        self.it.show()
 
 
 def except_hook(cls, exception, traceback):
