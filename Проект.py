@@ -2,11 +2,31 @@ import sys
 import sqlite3
 import io
 from PyQt6 import uic
+from PyQt6.QtGui import QPixmap, QPainter
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QGridLayout, QHBoxLayout, QVBoxLayout
-from PyQt6.QtWidgets import QComboBox, QTableWidget, QTableWidgetItem
+from PyQt6.QtWidgets import QComboBox, QTableWidget, QTableWidgetItem, QStyledItemDelegate
 
-desing = """"""
+
+imagePath = 'Стул.jpg'
+
+
+class ImgWidget1(QLabel):
+    def __init__(self, parent=None):
+        super(ImgWidget1, self).__init__(parent)
+        pic = QPixmap(imagePath)
+        self.setPixmap(pic)
+
+
+class ImgWidget2(QWidget):
+
+    def __init__(self, parent=None):
+        super(ImgWidget2, self).__init__(parent)
+        self.pic = QPixmap(imagePath)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.drawPixmap(0, 0, self.pic)
 
 
 class MainWindow(QMainWindow):
@@ -87,6 +107,7 @@ class MyWidget(QWidget):
         self.programs = {1: 'Стул', 2: 'Стол', 3: 'Диван', 4: 'Шкаф', 5: 'Вешалка', 6: 'Тумбочка'}
         self.kash = {1: 'Плачевное', 2: 'Плохое', 3: 'Среднее', 4: 'Нормальное', 5: 'Отличное'}
         self.d = {}
+        self.picture = QLabel()
         for key, value in self.programs.items():
             self.d[value] = key
         self.parameterSelection = QComboBox(self)
@@ -137,7 +158,6 @@ class MyWidget(QWidget):
             WHERE type.id = ?"""
             result = cur.execute(sql, (type_id,)).fetchall()
             self.tableWidget.setRowCount(len(result))
-            print(result)
             self.tableWidget.setColumnCount(7)
             self.titles = ["id товара", "имя товара", "тип товара", "год выпуска", "качество", "кол-во", "изображение товара"]
             self.tableWidget.setHorizontalHeaderLabels(self.titles)
@@ -154,7 +174,8 @@ class MyWidget(QWidget):
             for i, elem in enumerate(result):
                 self.tableWidget.setItem(i, 5, QTableWidgetItem(str(elem[5])))
             for i, elem in enumerate(result):
-                self.tableWidget.setItem(i, 6, QTableWidgetItem(str(elem[6])))
+                self.picture.setPixmap(QPixmap(elem[6] + '.jpg'))
+                self.tableWidget.setCellWidget(i, 6, self.picture)
             self.modified = {}
         except Exception as e:
             self.lable.show()
@@ -398,13 +419,21 @@ class MyWidget6(QWidget):
         d = self.le3.text()
         e = self.le4.text()
         f = self.le5.text()
-        if type(b) == int and type(c) == int and type(d) == int and type(e) == int:
+        try:
+            if int(b) // 2 == int(c) // 2 == int(d) // 2 == int(e) // 2:
+                pass
             cur = self.con.cursor()
             ins = (f"INSERT INTO predmet(name, type, year, quality, kolvo, izo) VALUES(?, ?, ?, ?, ?, ?)")
             cur.execute(ins, (a, b, c, d, e, f))
             self.it.setText('Товар успешно добавлен')
             self.con.commit()
-        else:
+        except ValueError:
+            print(a)
+            print(b)
+            print(c)
+            print(d)
+            print(e)
+            print(f)
             self.it.setText('Введите корректные данные')
         self.it.show()
 
