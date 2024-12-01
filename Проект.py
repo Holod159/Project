@@ -130,14 +130,15 @@ class MyWidget(QWidget):
         try:
             self.lable.hide()
             cur = self.con.cursor()
-            sql = """SELECT * FROM predmet 
+            sql = """SELECT predmet.id, predmet.name, type.name, predmet.year, quality.quality, predmet.kolvo, predmet.izo 
+            FROM predmet
             JOIN type ON type.id = predmet.type
             JOIN quality ON quality.id = predmet.quality
             WHERE type.id = ?"""
             result = cur.execute(sql, (type_id,)).fetchall()
             self.tableWidget.setRowCount(len(result))
             print(result)
-            self.tableWidget.setColumnCount(len(result[0]))
+            self.tableWidget.setColumnCount(7)
             self.titles = ["id товара", "имя товара", "тип товара", "год выпуска", "качество", "кол-во", "изображение товара"]
             self.tableWidget.setHorizontalHeaderLabels(self.titles)
             for i, elem in enumerate(result):
