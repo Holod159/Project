@@ -104,7 +104,7 @@ class MyWidget(QWidget):
         self.tableWidget = QTableWidget(self)
         self.tableWidget.resize(700, 300)
         self.tableWidget.move(100, 200)
-        self.con = sqlite3.connect('../untitled/a/Проект/Proekt.sql')
+        self.con = sqlite3.connect('../../../untitled1/Proekt.sql')
         self.cur = self.con.cursor()
 
     def initUI(self):
@@ -126,17 +126,18 @@ class MyWidget(QWidget):
         self.close()
 
     def search(self):
+        type_id = self.d[self.parameterSelection.currentText()]
         try:
             self.lable.hide()
             cur = self.con.cursor()
-            sql = (f"SELECT * FROM predmet WHERE type = {1}")
-            result = cur.execute(sql).fetchall()
+            sql = """SELECT * FROM predmet 
+            JOIN type ON type.id = predmet.type
+            JOIN quality ON quality.id = predmet.quality
+            WHERE type = ?"""
+            result = cur.execute(sql, (type_id,)).fetchall()
             self.tableWidget.setRowCount(len(result))
-            result1 = (result[0][0], result[0][1], self.programs[result[0][2]], result[0][3], self.kash[result[0][4]], result[0][5], result[0][6])
-            result = result1
-            result = [result]
             print(result)
-            self.tableWidget.setColumnCount(7)
+            self.tableWidget.setColumnCount(len(result[0]))
             self.titles = ["id товара", "имя товара", "тип товара", "год выпуска", "качество", "кол-во", "изображение товара"]
             self.tableWidget.setHorizontalHeaderLabels(self.titles)
             for i, elem in enumerate(result):
@@ -206,7 +207,7 @@ class MyWidget3(QWidget):
         self.itlabel.resize(300, 30)
         self.itlabel.move(10, 245)
         self.itlabel.hide()
-        self.con = sqlite3.connect('../untitled/a/Проект/Proekt.sql')
+        self.con = sqlite3.connect('../../../untitled1/Proekt.sql')
         self.cur = self.con.cursor()
 
     def mover(self):
