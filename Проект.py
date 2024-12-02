@@ -6,69 +6,58 @@ from PyQt6.QtGui import QPixmap, QPainter
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QGridLayout, QHBoxLayout, QVBoxLayout
 from PyQt6.QtWidgets import QComboBox, QTableWidget, QTableWidgetItem, QStyledItemDelegate
+from glawok import Ui_MainWindow
+from password import Ui_Form
+from wibrab import Ui_Form1
+from gpolz import Ui_Form2
+from pokup import Ui_Form3
+from uwtow import Ui_Form4
+from dobtow import Ui_Form5
 
 
 imagePath = 'Стул.jpg'
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 350, 300)
-        self.setWindowTitle('Мебель')
-
-        self.pol_button = QPushButton('Я пользователь', self)
-        self.pol_button.resize(150, 80)
-        self.pol_button.move(100, 40)
         self.pol_button.clicked.connect(self.mover)
-
-        self.rab_button = QPushButton('Я работник', self)
-        self.rab_button.resize(150, 80)
-        self.rab_button.move(100, 150)
         self.rab_button.clicked.connect(self.mover2)
 
     def mover(self):
         valid = QMessageBox.question(
             self, 'Вход', "Действительно зайти как пользователь?",
             buttons=QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
         if valid == QMessageBox.StandardButton.Yes:
             self.wp = MyWidget()
             self.wp.show()
             self.close()
+
     def mover2(self):
         valid = QMessageBox.question(
             self, 'Вход', "Действительно зайти как работник?",
             buttons=QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
         if valid == QMessageBox.StandardButton.Yes:
             self.wp = MyWidget1()
             self.wp.show()
             self.close()
 
 
-class MyWidget1(QWidget):
+class MyWidget1(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 350, 300)
-        self.setWindowTitle('Мебель-П')
-        self.lbl = QLabel(self)
-        self.lbl.setText('Введите пароль:')
-        self.lbl.resize(200, 30)
-        self.lbl.move(100, 100)
-        self.btn = QPushButton('Выход', self)
-        self.btn.move(200, 200)
         self.btn.clicked.connect(self.mover)
-        self.vp = QPushButton('Вход', self)
-        self.vp.move(100, 200)
         self.vp.clicked.connect(self.mover2)
-        self.le = QLineEdit(self)
-        self.le.resize(100, 30)
-        self.le.move(100, 150)
         self.w = MyWidget4()
 
     def mover(self):
@@ -78,13 +67,15 @@ class MyWidget1(QWidget):
         if self.le.text() == '12345':
             self.w.show()
             self.close()
+
         else:
             self.lbl.setText('Неверный пароль')
 
 
-class MyWidget(QWidget):
+class MyWidget(QWidget, Ui_Form2):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         self.initUI()
         self.con = sqlite3.connect('Proekt.sql')
         self.cur = self.con.cursor()
@@ -92,35 +83,21 @@ class MyWidget(QWidget):
         sql = """SELECT * FROM type"""
         result = cur.execute(sql).fetchall()
         self.programs = {}
+
         for e in result:
             self.programs[e[0]] = e[1]
+
         self.d = {}
         self.picture = QLabel()
+
         for key, value in self.programs.items():
             self.d[value] = key
-        self.parameterSelection = QComboBox(self)
-        self.queryButton = QPushButton('Поиск', self)
-        self.queryButton.resize(100, 30)
-        self.queryButton.move(100, 100)
-        self.buttonsave = QPushButton('Заказать', self)
-        self.buttonsave.resize(100, 30)
-        self.buttonsave.move(250, 100)
+
         self.buttonsave.clicked.connect(self.save)
-        self.parameterSelection.resize(100, 30)
-        self.parameterSelection.move(100, 50)
         self.parameterSelection.addItems(self.programs.values())
         self.queryButton.clicked.connect(self.search)
-        self.tableWidget = QTableWidget(self)
-        self.tableWidget.resize(700, 300)
-        self.tableWidget.move(100, 200)
 
     def initUI(self):
-        self.setGeometry(300, 300, 900, 600)
-        self.setWindowTitle('Мебель-П')
-        self.lbl = QLabel(self)
-        self.lbl.move(100, 100)
-        self.btn = QPushButton('Выход', self)
-        self.btn.move(100, 150)
         self.btn.clicked.connect(self.mover)
         self.lable = QLabel(self)
         self.lable.setText("Данный товар отсутствует")
@@ -147,6 +124,7 @@ class MyWidget(QWidget):
             self.tableWidget.setColumnCount(7)
             self.titles = ["id товара", "имя товара", "тип товара", "год выпуска", "качество", "кол-во", "изображение товара"]
             self.tableWidget.setHorizontalHeaderLabels(self.titles)
+
             for i, elem in enumerate(result):
                 self.tableWidget.setItem(i, 0, QTableWidgetItem(str(elem[0])))
             for i, elem in enumerate(result):
@@ -162,6 +140,7 @@ class MyWidget(QWidget):
             for i, elem in enumerate(result):
                 self.picture.setPixmap(QPixmap(elem[6] + '.jpg'))
                 self.tableWidget.setCellWidget(i, 6, self.picture)
+
             self.modified = {}
         except Exception as e:
             self.lable.show()
@@ -170,45 +149,14 @@ class MyWidget(QWidget):
         self.w3.show()
 
 
-class MyWidget3(QWidget):
+class MyWidget3(QWidget, Ui_Form3):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 350, 300)
-        self.setWindowTitle('Покупка')
-        self.label = QLabel(self)
-        self.label.setText('Введите id нужного товара')
-        self.label.resize(200, 30)
-        self.label.move(10, 10)
-        self.btn = QPushButton('Выход', self)
-        self.btn.move(240, 200)
-        self.btn.resize(100, 50)
         self.btn.clicked.connect(self.mover)
-        self.le = QLineEdit(self)
-        self.le.resize(100, 30)
-        self.le.move(15, 50)
-        self.label1 = QLabel(self)
-        self.label1.setText('Введите количество товара')
-        self.label1.resize(200, 30)
-        self.label1.move(170, 10)
-        self.le1 = QLineEdit(self)
-        self.le1.resize(100, 30)
-        self.le1.move(170, 50)
-        self.label2 = QLabel(self)
-        self.label2.setText('Введите номер карты(только 16 цифр, без тире)')
-        self.label2.resize(300, 30)
-        self.label2.move(15, 100)
-        self.op = QPushButton('Заказать', self)
-        self.op.move(120, 200)
-        self.op.resize(100, 50)
-        self.le2 = QLineEdit(self)
-        self.le2.resize(200, 30)
-        self.le2.move(60, 150)
-        self.pushButton = QPushButton('Узнать сумму', self)
-        self.pushButton.move(10, 200)
-        self.pushButton.resize(100, 50)
         self.op.clicked.connect(self.save)
         self.pushButton.clicked.connect(self.summ)
         self.itlabel = QLabel(self)
@@ -231,6 +179,7 @@ class MyWidget3(QWidget):
             result = cur.execute(sql).fetchall()
             a = self.le1.text()
             b = self.le.text()
+
             if int(b) <= len(result):
                 if int(result[int(b) - 1][5]) >= int(a):
                     print(result[int(b) - 1][5], a)
@@ -242,35 +191,26 @@ class MyWidget3(QWidget):
                     self.itlabel.setText('Большое или неправильное кол-во товара')
             else:
                 self.itlabel.setText('Неправильный id товара')
+
         self.itlabel.show()
 
     def summ(self):
         self.itlabel.show()
+
         try:
             self.itlabel.setText('Итого: ' + str(int(self.le1.text()) * 1000) + 'р')
         except Exception as e:
             self.itlabel.setText('Неправильное кол-во товара')
 
 
-class MyWidget4(QWidget):
+class MyWidget4(QWidget, Ui_Form1):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 350, 300)
-        self.setWindowTitle('Мебель-П')
-        self.l = QLabel(self)
-        self.l.resize(300, 30)
-        self.l.move(15, 10)
-        self.l.setText('Выберете действие:')
-        self.pushButton = QPushButton('Добавить новый товар', self)
-        self.pushButton.resize(300, 100)
-        self.pushButton.move(20, 60)
         self.pushButton.clicked.connect(self.mover)
-        self.pushButton2 = QPushButton('Увеличить кол-во товара', self)
-        self.pushButton2.resize(300, 100)
-        self.pushButton2.move(20, 180)
         self.pushButton2.clicked.connect(self.mover2)
         self.w1 = MyWidget5()
         self.w2 = MyWidget6()
@@ -284,31 +224,13 @@ class MyWidget4(QWidget):
         self.close()
 
 
-class MyWidget5(QWidget):
+class MyWidget5(QWidget, Ui_Form4):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 350, 300)
-        self.setWindowTitle('Мебель-П')
-        self.l = QLabel(self)
-        self.l.resize(300, 30)
-        self.l.move(15, 10)
-        self.l.setText('Введите id товара:')
-        self.le = QLineEdit(self)
-        self.le.resize(100, 30)
-        self.le.move(15, 50)
-        self.l1 = QLabel(self)
-        self.l1.resize(300, 30)
-        self.l1.move(15, 100)
-        self.l1.setText('Введите кол-во товара:')
-        self.le1 = QLineEdit(self)
-        self.le1.resize(100, 30)
-        self.le1.move(15, 140)
-        self.pushButton = QPushButton('Добавить', self)
-        self.pushButton.resize(300, 80)
-        self.pushButton.move(15, 180)
         self.pushButton.clicked.connect(self.mover)
         self.it = QLabel(self)
         self.it.resize(300, 30)
@@ -323,6 +245,7 @@ class MyWidget5(QWidget):
     def mover(self):
         a = self.le.text()
         b = self.le1.text()
+
         if int(a) <= len(self.result):
             cur = self.con.cursor()
             up = (f"UPDATE predmet SET kolvo = ? WHERE id = ?")
@@ -331,62 +254,17 @@ class MyWidget5(QWidget):
             self.con.commit()
         else:
             self.it.setText('Товар с таким id не найден')
+
         self.it.show()
 
 
-class MyWidget6(QWidget):
+class MyWidget6(QWidget, Ui_Form5):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 350, 400)
-        self.setWindowTitle('Мебель-П')
-        self.l = QLabel(self)
-        self.l.resize(300, 30)
-        self.l.move(15, 10)
-        self.l.setText('Введите имя товара:')
-        self.le = QLineEdit(self)
-        self.le.resize(100, 30)
-        self.le.move(15, 50)
-        self.l1 = QLabel(self)
-        self.l1.resize(300, 30)
-        self.l1.move(15, 100)
-        self.l1.setText('Введите тип товара:')
-        self.le1 = QLineEdit(self)
-        self.le1.resize(100, 30)
-        self.le1.move(15, 140)
-        self.l2 = QLabel(self)
-        self.l2.resize(300, 30)
-        self.l2.move(15, 180)
-        self.l2.setText('Введите год выпуска:')
-        self.le2 = QLineEdit(self)
-        self.le2.resize(100, 30)
-        self.le2.move(15, 210)
-        self.l3 = QLabel(self)
-        self.l3.resize(300, 30)
-        self.l3.move(150, 10)
-        self.l3.setText('Введите качество:')
-        self.le3 = QLineEdit(self)
-        self.le3.resize(100, 30)
-        self.le3.move(150, 50)
-        self.l4 = QLabel(self)
-        self.l4.resize(300, 30)
-        self.l4.move(150, 100)
-        self.l4.setText('Введите количество:')
-        self.le4 = QLineEdit(self)
-        self.le4.resize(100, 30)
-        self.le4.move(150, 140)
-        self.l5 = QLabel(self)
-        self.l5.resize(300, 30)
-        self.l5.move(150, 180)
-        self.l5.setText('Введите название изображения:')
-        self.le5 = QLineEdit(self)
-        self.le5.resize(100, 30)
-        self.le5.move(150, 210)
-        self.pushButton = QPushButton('Добавить', self)
-        self.pushButton.resize(300, 80)
-        self.pushButton.move(15, 290)
         self.pushButton.clicked.connect(self.mover)
         self.it = QLabel(self)
         self.it.resize(300, 30)
@@ -405,6 +283,7 @@ class MyWidget6(QWidget):
         d = self.le3.text()
         e = self.le4.text()
         f = self.le5.text()
+
         try:
             if int(b) // 2 == int(c) // 2 == int(d) // 2 == int(e) // 2:
                 pass
@@ -415,6 +294,7 @@ class MyWidget6(QWidget):
             self.con.commit()
         except ValueError:
             self.it.setText('Введите корректные данные')
+
         self.it.show()
 
 
